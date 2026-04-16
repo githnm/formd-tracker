@@ -6,24 +6,24 @@ immediately — this tool catches funding rounds before they hit the news.
 
 <img width="1457" height="873" alt="image" src="https://github.com/user-attachments/assets/4e46fe90-719d-4e68-994a-5ca129d6b552" />
 
+## Quick start
 
-## Install
+Five commands to a working web UI. The only thing you need to edit is your
+name + email (SEC requires a real contact in the User-Agent header, or it
+returns `403`).
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+git clone https://github.com/githnm/formd-tracker.git && cd formd-tracker
+python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+cp .env.example .env       # then edit .env: EDGAR_USER_AGENT="Your Name your@email.com"
+python main.py backfill --days 7
+python main.py serve       # open http://127.0.0.1:8000
 ```
+
+That's it. To also poll for new filings every 30 min, open a second terminal
+and run `python main.py run` from the same directory.
 
 ## Configure
-
-EDGAR requires a User-Agent with a real name and contact email, or it will
-return `403`. Set it via env:
-
-```bash
-cp .env.example .env
-# edit .env, set EDGAR_USER_AGENT="Your Name your@email.com"
-```
 
 `config.yaml` controls polling interval, filters, and alerts. Defaults are
 sensible — you can usually leave it alone.
