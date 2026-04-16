@@ -1,0 +1,57 @@
+polling:
+  interval_minutes: 30
+
+filters:
+  # mode: "industry_group" (strict, default — uses Form D's self-reported
+  # industryGroupType), "sic" (strict — uses EDGAR SIC code), or "keyword"
+  # (loose — regex match on issuer name + industry + previous names).
+  mode: industry_group
+  countries:
+    - US
+  min_offering_size: 1000000  # USD; unknown amounts are NOT filtered out
+  # Keywords used only when mode: keyword. Trimmed to high-precision tech terms;
+  # generics like "platform", "tech", "dev", "data", "labs" were removed because
+  # they match real-estate funds ("Development Partners", "Technologies Fund",
+  # "Platform SPC") and pooled-investment vehicles too eagerly.
+  keywords:
+    - ai
+    - software
+    - saas
+    - cloud
+    - api
+    - cyber
+    - crypto
+    - analytics
+    - compute
+    - robotics
+    - ml
+    - fintech
+    - biotech
+  sic_codes:
+    - "7370"
+    - "7371"
+    - "7372"
+    - "7373"
+    - "7374"
+    - "7379"
+    - "7389"
+    - "3674"
+    - "3576"
+    - "4813"
+  # industry_groups: if omitted, defaults to:
+  #   - Computers
+  #   - Telecommunications
+  #   - Other Technology
+
+alerts:
+  console: true
+  webhook_url: ""             # set here or override via WEBHOOK_URL env var
+  webhook_format: slack       # "slack" or "discord"
+
+edgar:
+  # REQUIRED. EDGAR blocks requests without a contact email in the UA.
+  # Set here or override via EDGAR_USER_AGENT env var (env wins).
+  user_agent: ""
+
+storage:
+  db_path: form_d.sqlite

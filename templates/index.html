@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>form-d-watch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --panel-2: #1c232c;
+      --fg: #e6edf3;
+      --muted: #8b949e;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --orange: #d29922;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    header {
+      padding: 22px 32px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      margin: 0 0 2px 0;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    h2 {
+      margin: 0 0 6px 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    h3 {
+      margin: 20px 0 8px 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .subtitle { color: var(--muted); font-size: 13px; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      padding: 16px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 16px;
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .stat-sub {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    main { padding: 20px 32px 40px; }
+
+    .table-wrap {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+    }
+
+    /* Grid.js dark overrides */
+    .gridjs-wrapper { background: var(--panel) !important; border: none !important; box-shadow: none !important; }
+    .gridjs-table { background: var(--panel) !important; color: var(--fg) !important; width: 100%; }
+    .gridjs-th { background: var(--panel) !important; color: var(--muted) !important; border-color: var(--border) !important; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .gridjs-td { background: var(--panel) !important; color: var(--fg) !important; border-color: var(--border) !important; }
+    .gridjs-tr:hover .gridjs-td { background: var(--panel-2) !important; }
+    .gridjs-search input, .gridjs-search-input {
+      background: var(--bg) !important;
+      color: var(--fg) !important;
+      border: 1px solid var(--border) !important;
+    }
+    .gridjs-footer { background: var(--panel) !important; color: var(--muted) !important; border-color: var(--border) !important; box-shadow: none !important; }
+    .gridjs-pagination { color: var(--fg) !important; }
+    .gridjs-pagination .gridjs-pages button { background: var(--bg) !important; color: var(--fg) !important; border: 1px solid var(--border) !important; }
+    .gridjs-pagination .gridjs-pages button:disabled { color: var(--muted) !important; }
+    .gridjs-pagination .gridjs-pages button.gridjs-currentPage { background: var(--accent) !important; color: white !important; border-color: var(--accent) !important; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+      vertical-align: middle;
+    }
+    .badge-d { background: #1f6feb33; color: #79b8ff; }
+    .badge-da { background: #d2992233; color: #ffd666; }
+    .amend-chip {
+      display: inline-block;
+      margin-left: 4px;
+      padding: 1px 5px;
+      background: #d2992233;
+      color: #ffd666;
+      border-radius: 8px;
+      font-size: 10px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: var(--muted); }
+
+    .view-btn {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 12px;
+    }
+    .view-btn:hover { background: var(--panel-2); border-color: var(--accent); }
+
+    .link-pill {
+      display: inline-block;
+      padding: 1px 6px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .link-pill:hover { background: var(--panel-2); border-color: var(--accent); text-decoration: none; }
+    .link-li { color: #79b8ff; }
+    .link-missing { color: var(--muted); font-size: 12px; }
+
+    .amount-unknown { color: var(--muted); font-style: italic; }
+    .amount-big { color: var(--green); }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      z-index: 100;
+      padding: 60px 16px 32px;
+      overflow-y: auto;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      max-width: 760px;
+      width: 100%;
+      padding: 24px 28px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 24px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--fg); }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 8px 20px;
+      margin: 16px 0 4px;
+      font-size: 13px;
+    }
+    .detail-key { color: var(--muted); }
+    .persons-list {
+      padding: 0;
+      margin: 8px 0 0;
+      list-style: none;
+    }
+    .persons-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .persons-list li:last-child { border-bottom: none; }
+    .person-name { font-weight: 500; }
+    .person-rel { color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+    .empty {
+      padding: 48px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .loading { padding: 24px; color: var(--muted); }
+
+    .demo-banner {
+      background: #d2992226;
+      border-bottom: 1px solid #d2992266;
+      color: #ffd666;
+      padding: 10px 32px;
+      font-size: 13px;
+      display: none;
+    }
+    .demo-banner.show { display: block; }
+    .demo-banner code {
+      background: #00000033;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>form-d-watch</h1>
+    <div class="subtitle">SEC Form D filings · US tech companies · updated every 30 min</div>
+  </header>
+
+  <div class="demo-banner" id="demoBanner">
+    <strong>Demo data shown.</strong>
+    Backend not reachable — start the server with
+    <code>python main.py serve</code> to see real filings from your SQLite DB.
+  </div>
+
+  <div class="stats" id="stats"><div class="loading">Loading stats…</div></div>
+
+  <main>
+    <div class="table-wrap" id="tableWrap"><div class="loading">Loading filings…</div></div>
+  </main>
+
+  <div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this) closeModal()">
+    <div class="modal" id="modal"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gridjs/dist/gridjs.umd.js"></script>
+  <script>
+    // ---- Demo / sample data (used when no backend is reachable) -----------
+    const SAMPLE_FILINGS = [
+      { accession_number: '0001765647-26-000001', form_type: 'D', is_amendment: false, amendment_count: 0,
+        issuer_name: 'Beacon Biosignals, Inc.', cik: '1765647', state: 'MA', country: 'US',
+        industry_group: 'Other Technology', sic: '7372', sic_description: 'Prepackaged Software',
+        total_offering_amount: 103280711, total_amount_sold: 103280711,
+        date_of_first_sale: '2025-10-07', filed_at: '2026-04-15',
+        filing_url: 'https://www.sec.gov/Archives/edgar/data/1765647/000176564726000001/0001765647-26-000001-index.htm',
+        website_url: 'https://beacon.bio', linkedin_url: 'https://www.linkedin.com/company/beacon-biosignals',
+        enriched_at: '2026-04-15T12:00:00Z' },
+      { accession_number: '0009999999-26-000001', form_type: 'D', is_amendment: false, amendment_count: 2,
+        issuer_name: 'Acme AI Labs, Inc.', cik: '9999999', state: 'CA', country: 'US',
+        industry_group: 'Other Technology', sic: '7372', sic_description: 'Prepackaged Software',
+        total_offering_amount: 25000000, total_amount_sold: 18000000,
+        date_of_first_sale: '2026-04-01', filed_at: '2026-04-12', filing_url: '#',
+        website_url: 'https://acme-ai.com', linkedin_url: 'https://www.linkedin.com/company/acme-ai-labs',
+        enriched_at: '2026-04-12T09:30:00Z' },
+      { accession_number: '0008888888-26-000003', form_type: 'D/A', is_amendment: true, amendment_count: 0,
+        issuer_name: 'Northwind Cloud Compute Co.', cik: '8888888', state: 'WA', country: 'US',
+        industry_group: 'Computers', sic: '7370', sic_description: 'Services-Computer Services',
+        total_offering_amount: 75000000, total_amount_sold: 60000000,
+        date_of_first_sale: '2026-02-14', filed_at: '2026-04-10', filing_url: '#',
+        website_url: 'https://northwind.cloud', linkedin_url: 'https://www.linkedin.com/company/northwind-cloud',
+        enriched_at: '2026-04-10T14:20:00Z' },
+      { accession_number: '0007777777-26-000002', form_type: 'D', is_amendment: false, amendment_count: 0,
+        issuer_name: 'Helix Robotics, Inc.', cik: '7777777', state: 'TX', country: 'US',
+        industry_group: 'Other Technology', sic: null, sic_description: null,
+        total_offering_amount: 12000000, total_amount_sold: 9500000,
+        date_of_first_sale: '2026-03-22', filed_at: '2026-04-09', filing_url: '#',
+        website_url: 'https://helixrobotics.io', linkedin_url: null,
+        enriched_at: '2026-04-09T08:15:00Z' },
+      { accession_number: '0006666666-26-000001', form_type: 'D', is_amendment: false, amendment_count: 0,
+        issuer_name: 'Cypher Cyber Defense LLC', cik: '6666666', state: 'NY', country: 'US',
+        industry_group: 'Telecommunications', sic: '4813', sic_description: 'Telephone Communications',
+        total_offering_amount: 5500000, total_amount_sold: 4000000,
+        date_of_first_sale: '2026-03-30', filed_at: '2026-04-08', filing_url: '#',
+        website_url: null, linkedin_url: 'https://www.linkedin.com/company/cypher-cyber',
+        enriched_at: '2026-04-08T18:00:00Z' },
+      { accession_number: '0005555555-26-000004', form_type: 'D', is_amendment: false, amendment_count: 1,
+        issuer_name: 'Quantum Analytics Group', cik: '5555555', state: 'CA', country: 'US',
+        industry_group: 'Other Technology', sic: '7389', sic_description: 'Services-Business Services',
+        total_offering_amount: 250000000, total_amount_sold: 250000000,
+        date_of_first_sale: '2026-01-20', filed_at: '2026-04-05', filing_url: '#',
+        website_url: 'https://quantum-analytics.com', linkedin_url: 'https://www.linkedin.com/company/quantum-analytics-group',
+        enriched_at: '2026-04-05T11:45:00Z' },
+      { accession_number: '0004444444-26-000001', form_type: 'D', is_amendment: false, amendment_count: 0,
+        issuer_name: 'Mesa Crypto Holdings', cik: '4444444', state: 'FL', country: 'US',
+        industry_group: 'Other Technology', sic: null, sic_description: null,
+        total_offering_amount: null, total_amount_sold: null,
+        date_of_first_sale: '2026-04-02', filed_at: '2026-04-04', filing_url: '#',
+        website_url: null, linkedin_url: null, enriched_at: null },
+      { accession_number: '0003333333-26-000002', form_type: 'D', is_amendment: false, amendment_count: 0,
+        issuer_name: 'Lattice Dev Tools, Inc.', cik: '3333333', state: 'MA', country: 'US',
+        industry_group: 'Computers', sic: '7372', sic_description: 'Prepackaged Software',
+        total_offering_amount: 8000000, total_amount_sold: 6500000,
+        date_of_first_sale: '2026-03-15', filed_at: '2026-04-02', filing_url: '#',
+        website_url: 'https://lattice.dev', linkedin_url: 'https://www.linkedin.com/company/lattice-dev-tools',
+        enriched_at: '2026-04-02T16:00:00Z' },
+    ];
+    const SAMPLE_STATS = {
+      total_filings: SAMPLE_FILINGS.length,
+      total_amendments_applied: 3,
+      total_raised_usd: SAMPLE_FILINGS.reduce((s, f) => s + (f.total_offering_amount || 0), 0),
+      by_state: { CA: 2, MA: 2, WA: 1, TX: 1, NY: 1, FL: 1 },
+      by_industry_group: { 'Other Technology': 5, 'Computers': 2, 'Telecommunications': 1 },
+      by_size_bucket: { unknown: 1, under_1m: 0, b_1_5m: 0, b_5_25m: 4, b_25_100m: 2, over_100m: 1, total: 8 },
+    };
+    const SAMPLE_DETAILS = {
+      '0009999999-26-000001': {
+        accession_number: '0009999999-26-000001', form_type: 'D', is_amendment: false, amendment_count: 2,
+        cik: '9999999', issuer_name: 'Acme AI Labs, Inc.',
+        previous_names: ['Acme ML Research, Inc.'],
+        entity_type: 'Corporation', year_of_inc: '2023', jurisdiction_of_inc: 'DELAWARE',
+        street1: '123 Market St', city: 'San Francisco', state: 'CA', country: 'US', zip_code: '94105',
+        industry_group: 'Other Technology', sic: '7372', sic_description: 'Prepackaged Software',
+        total_offering_amount: 25000000, total_amount_sold: 18000000, total_remaining: 7000000,
+        date_of_first_sale: '2026-04-01', minimum_investment: 250000, number_already_invested: 12,
+        filed_at: '2026-04-12', filing_url: '#',
+        related_persons: [
+          { name: 'Jane Founder', city: 'San Francisco', state_or_country: 'CA',
+            relationships: ['Executive Officer', 'Director'] },
+          { name: 'Sam Investor', city: 'Menlo Park', state_or_country: 'CA',
+            relationships: ['Director'] },
+        ],
+      },
+    };
+    let DEMO_MODE = false;
+
+    // ---- Helpers ----------------------------------------------------------
+    const fmtMoney = (n) => (n == null)
+      ? '<span class="amount-unknown">unknown</span>'
+      : '$' + Number(n).toLocaleString();
+    const fmtMoneyPlain = (n) => (n == null) ? 'unknown' : '$' + Number(n).toLocaleString();
+
+    // Wraps fetch so a missing backend (preview / file://) falls back to demo.
+    async function safeFetchJson(url, demoValue) {
+      try {
+        const r = await fetch(url);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return await r.json();
+      } catch (e) {
+        DEMO_MODE = true;
+        document.getElementById('demoBanner').classList.add('show');
+        return demoValue;
+      }
+    }
+
+    function escapeHtml(s) {
+      return (s == null ? '' : String(s)).replace(/[&<>"']/g, c =>
+        ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
+      );
+    }
+
+    function summarizeStats(s) {
+      const topState = Object.keys(s.by_state)[0] || '—';
+      const topIndustry = Object.keys(s.by_industry_group)[0] || '—';
+      return `
+        <div class="stat-card"><div class="stat-label">Total Filings</div>
+          <div class="stat-value">${s.total_filings.toLocaleString()}</div>
+          <div class="stat-sub">${s.total_amendments_applied} amendments applied</div></div>
+        <div class="stat-card"><div class="stat-label">Total Raised</div>
+          <div class="stat-value">${fmtMoneyPlain(s.total_raised_usd)}</div>
+          <div class="stat-sub">across all stored filings</div></div>
+        <div class="stat-card"><div class="stat-label">$100M+ Rounds</div>
+          <div class="stat-value">${s.by_size_bucket.over_100m || 0}</div>
+          <div class="stat-sub">${s.by_size_bucket.b_25_100m || 0} at $25–100M</div></div>
+        <div class="stat-card"><div class="stat-label">Top State</div>
+          <div class="stat-value">${escapeHtml(topState)}</div>
+          <div class="stat-sub">${(s.by_state[topState] || 0)} filings</div></div>
+        <div class="stat-card"><div class="stat-label">Top Industry</div>
+          <div class="stat-value" style="font-size:16px;">${escapeHtml(topIndustry).slice(0, 28)}</div>
+          <div class="stat-sub">${(s.by_industry_group[topIndustry] || 0)} filings</div></div>
+      `;
+    }
+
+    async function loadStats() {
+      const s = await safeFetchJson('/api/stats', SAMPLE_STATS);
+      document.getElementById('stats').innerHTML = summarizeStats(s);
+    }
+
+    function formTypeCell(f) {
+      const base = f.form_type === 'D/A'
+        ? '<span class="badge badge-da">D/A</span>'
+        : '<span class="badge badge-d">D</span>';
+      const chip = f.amendment_count > 0 ? `<span class="amend-chip">+${f.amendment_count}</span>` : '';
+      return base + chip;
+    }
+
+    // Form D doesn't carry website/LinkedIn fields. These cells render as
+    // one-click Google searches scoped to the issuer name — opens in a new tab.
+    function googleSearchUrl(name, suffix) {
+      const q = `"${name}" ${suffix}`;
+      return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+    }
+
+    function siteCell(f) {
+      const name = f.issuer_name || '';
+      if (!name) return '<span class="link-missing">—</span>';
+      const url = googleSearchUrl(name, 'official site');
+      return `<a class="link-pill" href="${escapeHtml(url)}" target="_blank" rel="noopener" title="Search Google for ${escapeHtml(name)} official site">site</a>`;
+    }
+
+    function linkedinCell(f) {
+      const name = f.issuer_name || '';
+      if (!name) return '<span class="link-missing">—</span>';
+      const url = googleSearchUrl(name, 'linkedin');
+      return `<a class="link-pill link-li" href="${escapeHtml(url)}" target="_blank" rel="noopener" title="Search Google for ${escapeHtml(name)} on LinkedIn">in</a>`;
+    }
+
+    function renderTable(filings) {
+      const data = filings.map(f => [
+        f.filed_at || '',
+        f.date_of_first_sale || '',
+        f.issuer_name || '',
+        f.total_offering_amount,
+        f.total_amount_sold,
+        f.industry_group || f.sic_description || '',
+        f.state || f.country || '',
+        f,  // -> Site column formatter
+        f,  // -> LinkedIn column formatter
+        f,  // -> Form column formatter
+        f.accession_number,
+      ]);
+
+      const wrap = document.getElementById('tableWrap');
+      wrap.innerHTML = '';
+      if (!filings.length) {
+        wrap.innerHTML = '<div class="empty">No filings yet. Run <code>python main.py backfill --days 7</code> or start the poller.</div>';
+        return;
+      }
+
+      new gridjs.Grid({
+        columns: [
+          { name: 'Filed', width: '100px' },
+          { name: 'First sale', width: '105px' },
+          { name: 'Issuer', width: '22%' },
+          {
+            name: 'Funding',
+            formatter: (cell) => gridjs.html(fmtMoney(cell)),
+            sort: { compare: (a, b) => (a ?? -1) - (b ?? -1) },
+          },
+          {
+            name: 'Sold',
+            formatter: (cell) => gridjs.html(fmtMoney(cell)),
+            sort: { compare: (a, b) => (a ?? -1) - (b ?? -1) },
+          },
+          { name: 'Industry' },
+          { name: 'ST', width: '50px' },
+          {
+            name: 'Site',
+            width: '60px',
+            sort: false,
+            formatter: (cell) => gridjs.html(siteCell(cell)),
+          },
+          {
+            name: 'LinkedIn',
+            width: '80px',
+            sort: false,
+            formatter: (cell) => gridjs.html(linkedinCell(cell)),
+          },
+          {
+            name: 'Form',
+            width: '80px',
+            sort: false,
+            formatter: (cell) => gridjs.html(formTypeCell(cell)),
+          },
+          {
+            name: '',
+            width: '70px',
+            sort: false,
+            formatter: (cell) => gridjs.html(
+              `<button class="view-btn" onclick="showDetail('${escapeHtml(cell)}')">View</button>`
+            ),
+          },
+        ],
+        data,
+        sort: true,
+        search: { enabled: true },
+        pagination: { enabled: true, limit: 25, summary: true },
+        resizable: true,
+        style: {
+          td: { padding: '8px 10px', 'font-size': '13px' },
+          th: { padding: '8px 10px' },
+        },
+      }).render(wrap);
+    }
+
+    async function loadFilings() {
+      const data = await safeFetchJson('/api/filings?limit=1000', { filings: SAMPLE_FILINGS });
+      renderTable(data.filings);
+    }
+
+    async function showDetail(accession) {
+      const modal = document.getElementById('modal');
+      modal.innerHTML = '<div class="loading">Loading…</div>';
+      document.getElementById('modalBackdrop').classList.add('open');
+      const fallback = SAMPLE_DETAILS[accession] || (() => {
+        const row = SAMPLE_FILINGS.find(r => r.accession_number === accession) || SAMPLE_FILINGS[0];
+        return {
+          ...row, total_remaining: null, minimum_investment: null,
+          number_already_invested: null, jurisdiction_of_inc: null,
+          entity_type: null, previous_names: [], street1: null, zip_code: null,
+          related_persons: [],
+        };
+      })();
+      const f = await safeFetchJson('/api/filings/' + encodeURIComponent(accession), fallback);
+      renderDetail(f);
+    }
+
+    function renderDetail(f) {
+      const address = [f.street1, f.street2, f.city, f.state, f.zip_code].filter(Boolean).join(', ') || '—';
+      const personsHtml = (f.related_persons && f.related_persons.length)
+        ? `<ul class="persons-list">` + f.related_persons.map(p => {
+            const loc = [p.city, p.state_or_country].filter(Boolean).join(', ');
+            const rels = (p.relationships || []).join(' · ') || '—';
+            return `<li>
+              <div class="person-name">${escapeHtml(p.name)}</div>
+              <div class="person-rel">${escapeHtml(rels)}${loc ? ' — ' + escapeHtml(loc) : ''}</div>
+            </li>`;
+          }).join('') + `</ul>`
+        : '<p class="subtitle">None listed.</p>';
+
+      const prevNames = (f.previous_names && f.previous_names.length)
+        ? f.previous_names.map(escapeHtml).join(', ') : '';
+
+      document.getElementById('modal').innerHTML = `
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <h2>${escapeHtml(f.issuer_name)}</h2>
+        <div class="subtitle">${formTypeCell(f)} <span class="mono">${escapeHtml(f.accession_number)}</span> · CIK ${escapeHtml(f.cik)}</div>
+        <div class="detail-grid">
+          <div class="detail-key">Offering</div><div>${fmtMoney(f.total_offering_amount)}</div>
+          <div class="detail-key">Sold</div><div>${fmtMoney(f.total_amount_sold)}</div>
+          <div class="detail-key">Remaining</div><div>${fmtMoney(f.total_remaining)}</div>
+          <div class="detail-key">First sale</div><div>${escapeHtml(f.date_of_first_sale || '—')}</div>
+          <div class="detail-key">Filed</div><div>${escapeHtml(f.filed_at || '—')}</div>
+          <div class="detail-key">Industry</div><div>${escapeHtml(f.industry_group || '—')}${f.sic_description ? ' · ' + escapeHtml(f.sic_description) : ''}</div>
+          <div class="detail-key">SIC</div><div>${escapeHtml(f.sic || '—')}</div>
+          <div class="detail-key">Address</div><div>${escapeHtml(address)}</div>
+          <div class="detail-key">Country</div><div>${escapeHtml(f.country || '—')}</div>
+          <div class="detail-key">Jurisdiction</div><div>${escapeHtml(f.jurisdiction_of_inc || '—')}</div>
+          <div class="detail-key">Entity type</div><div>${escapeHtml(f.entity_type || '—')}</div>
+          <div class="detail-key">Min. investment</div><div>${fmtMoney(f.minimum_investment)}</div>
+          <div class="detail-key">Investors</div><div>${f.number_already_invested == null ? '—' : f.number_already_invested}</div>
+          <div class="detail-key">Search</div><div>
+            <a href="${escapeHtml(googleSearchUrl(f.issuer_name || '', 'official site'))}" target="_blank" rel="noopener">website ↗</a>
+            &nbsp;·&nbsp;
+            <a href="${escapeHtml(googleSearchUrl(f.issuer_name || '', 'linkedin'))}" target="_blank" rel="noopener">linkedin ↗</a>
+          </div>
+          ${prevNames ? `<div class="detail-key">Previous names</div><div>${prevNames}</div>` : ''}
+        </div>
+        <h3>Related Persons</h3>
+        ${personsHtml}
+        <p style="margin-top: 18px;">
+          ${f.filing_url ? `<a href="${escapeHtml(f.filing_url)}" target="_blank" rel="noopener">View on EDGAR →</a>` : ''}
+        </p>
+      `;
+    }
+
+    function closeModal() {
+      document.getElementById('modalBackdrop').classList.remove('open');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    loadStats();
+    loadFilings();
+  </script>
+</body>
+</html>
